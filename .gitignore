@@ -4,5 +4,8 @@
 # Checkpoints do Jupyter Notebook
 .ipynb_checkpoints
 
-# Jupyter Notebook
-*.ipynb
+# Arquivos Python
+*.py
+
+# pycache
+__pycache__

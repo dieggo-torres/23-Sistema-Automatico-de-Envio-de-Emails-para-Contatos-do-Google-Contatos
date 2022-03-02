@@ -4,22 +4,21 @@ import pyautogui
 # Importa a biblioteca time
 import time
 
-# Funções a serem usadas em main.py
-def clicar_imagem(img):
-    '''Espera até que a imagem apareça na tela para depois clicar nela'''
-
-    while not pyautogui.locateOnScreen(img):
-        time.sleep(1)
-
-    # Obtém as informações da imagem já carregada
-    x, y, largura, altura = pyautogui.locateAllOnScreen(img)
-
-    # Clica no meio da imagem
-    pyautogui.click(x + largura /2, y + altura / 2)
+# Importa a biblioteca pyperclip
+import pyperclip
 
 
 def esperar_pagina_carregar(img):
     '''Espera até que a imagem apareça na tela para poder executar uma ação.'''
 
     while not pyautogui.locateOnScreen(img):
-        time.sleep(1)
+        time.sleep(0.5)
+        
+
+def copiar_colar(conteudo):
+    '''Copia o conteúdo para a área de transferência e depois cola'''
+    # Copia conteúdo para a área de transferência
+    pyperclip.copy(conteudo)
+    
+    # Cola o conteúdo
+    pyautogui.hotkey('ctrl', 'v')

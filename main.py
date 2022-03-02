@@ -1,5 +1,5 @@
-# Importa o módulo rotinas
-from rotinas import clicar_imagem, esperar_pagina_carregar
+# Importa métodos do módulo rotinas
+import rotinas
 
 # Importa a biblioteca pandas
 import pandas as pd
@@ -16,14 +16,11 @@ import os
 # Importa o método load_doten
 from dotenv import load_dotenv
 
-# Importa a biblioteca time
-import time
-
 # Carrega as variáveis de ambiente
 load_dotenv()
 
 # Intervalo entre os comandos do pyautogui
-pyautogui.PAUSE = 1
+pyautogui.PAUSE = 2
 
 # Pergunta se o usuário quer dar início à automação
 confirmacao = pyautogui.confirm(
@@ -56,30 +53,18 @@ if confirmacao == 'OK' and senha == os.getenv('SENHA_AUTOMACAO'):
     pyautogui.press('enter')
 
     # Digita a URL especificada
-    pyautogui.write('https://mail.google.com/')
+    pyautogui.write('https://contacts.google.com/')
     pyautogui.press('enter')
 
-    # Espera o Gmail carregar
-    esperar_pagina_carregar('tela_inicial_gmail.png')
-
-    # Clicar no menu do Google Apps
-    clicar_imagem('google_apps_menu.png')
-
-    # Clicar no ícone do Google Contatos
-    clicar_imagem('icone_google_contatos.png')
-
-    # Esperar página do Google Contatos carregar
+    # Espera o Google Contatos carregar
     esperar_pagina_carregar('icone_google_contatos_tela_principal.png')
 
     # Clicar no botão de exportação
-    clicar_imagem('botao_exportar_menu_google_contatos.png')
+    pyautogui.click(x=104, y=509, button='left')
 
     # Esperar menu modal carregar e confirmar a exportação
     esperar_pagina_carregar('botao_exportar_menu_modal.png')
-    clicar_imagem('botao_exportar_menu_modal.png')
-
-    # Aguarda 10s até que o arquivo seja baixado
-    time.sleep(10)
+    pyautogui.click(x=810, y=540, button='left')
 
     # Caminho do arquivo baixado
     caminho = os.getenv('CAMINHO')
@@ -90,14 +75,21 @@ if confirmacao == 'OK' and senha == os.getenv('SENHA_AUTOMACAO'):
     # Elimina as colunas vazias do dataframe
     df_contatos.dropna(axis=1, how='all', inplace=True)
 
-    # Usa o atalho Ctrl + PgUp para voltar para a tela do Gmail
-    pyautogui.hotkey('ctrl', 'pgup')
+    # Cria uma nova aba
+    pyautogui.hotkey('ctrl', 't')
 
-    # Clica no botão para escrever o e-mail
-    clicar_imagem('botao_escrever_gmail.png')
+    # Digita a URL especificada e pressiona a tecla enter
+    pyautogui.write('https://mail.google.com/')
+    pyautogui.press('enter')
+
+    # Espera o botão de escrever e-mail aparecer
+    esperar_pagina_carregar('botao_escrever_gmail.png')
 
     # Percorre cada linha do dataframe para obter as informações de contato
     for i, email in enumerate(df_contatos['E-mail 1 - Value']):
+        # Clica no botão de escrever e-mail
+        pyautogui.click(x=80, y=171, button='left')
+
         # Nome do destinatário
         nome = df_contatos.loc[i, 'Name']
 
@@ -107,9 +99,9 @@ if confirmacao == 'OK' and senha == os.getenv('SENHA_AUTOMACAO'):
         # Confirma o contato
         pyautogui.press('enter')
 
-        # Pula para o campo de assunto
+        # Pula para o campo de assunto e escreve o conteúdo
         pyautogui.press('tab')
-        pyautogui.write('Teste de Automação com Python')
+        copiar_colar('Teste de Automação com Python')
 
         # Pula para o campo de corpo do e-mail
         pyautogui.press('tab')
@@ -124,17 +116,13 @@ if confirmacao == 'OK' and senha == os.getenv('SENHA_AUTOMACAO'):
         '''
 
         # Copia conteúdo da mensagem para a área de transferência
-        pyperclip.copy(mensagem)
-
-        # Cola a mensagem
-        pyautogui.hotkey('ctrl', 'v')
+        copiar_colar(mensagem)
 
         # Envia o e-mail usando um atalho
         pyautogui.hotkey('ctrl', 'enter')
-
 else:
     pass
 
-pyautogui.prompt(
+pyautogui.alert(
     text='Fim da automação. Agora você já pode usar seu computador.'
 )
